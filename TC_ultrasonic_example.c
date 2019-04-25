@@ -1,5 +1,6 @@
 /******************************************************************************/
-/* TC_ultrasonic_example.c                                                      */
+/* TC_ultrasonic_example.c 
+Name: Adam Worley, Mashroor Rashid*/
 /******************************************************************************/
 /* This file is part of the uVision/ARM development tools.                    */
 /* Copyright (c) 2005-2006 Keil Software. All rights reserved.                */
@@ -38,7 +39,7 @@ int main (void)
 	USART0_INIT(); // Initialize USART0
 
 	TC0_INIT(); // Initialize TC0 to create 40KHz waveform
-  TC1_INIT(); // Initialize TC1 to create 101us active high pulse and 1ms active low pulse
+  TC1_INIT(); // Initialize TC1 to create 101us active high pulse and 1.5ms active low pulse
 	TC2_INIT(); // Initialize TC2 in capture mode
 
 	AT91C_BASE_TCB->TCB_BMR = (2); // Connect TIOA1 to XC0
@@ -66,16 +67,18 @@ int main (void)
     {
 			// Non-destructive SR check
       temp = AT91C_BASE_TC2->TC_SR & 0xFFFFF;
-      if(temp && 1)
+      if(temp & 1)
         num_overflows++;
     }while(!(temp & (1<<6)) && num_overflows <= 20 );
 	
     // Calculate the distance or print error message
 		if(num_overflows <= 20)
 		{
-			num_counts = (num_overflows * MAX_COUNT) + AT91C_BASE_TC2->TC_RB - AT91C_BASE_TC2->TC_RA;
+			num_counts = (num_overflows * MAX_COUNT) + AT91C_BASE_TC2->TC_RA;// - AT91C_BASE_TC2->TC_RA;
 			distance = (num_counts * (.0000000417334) * 1129.9)/2;
-			printf("Distance: %f feet\n\r", distance);		
+			printf("Distance: %f \n\r", distance);
+			printf("Counts: %d \n\r", num_counts);
+
 		} else{
 			printf("Distance too far.\n\r");
 		}
